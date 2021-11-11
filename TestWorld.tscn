@@ -1,12 +1,17 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://FirstEnemy.tscn" type="PackedScene" id=2]
+[ext_resource path="res://PushBox.tscn" type="PackedScene" id=2]
+[ext_resource path="res://HorizontalWall.tscn" type="PackedScene" id=3]
 
 [node name="TestWorld" type="Node2D"]
+position = Vector2( 394.566, 140.007 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 176.75, 150.75 )
+position = Vector2( 338.464, -4.63731 )
 
-[node name="FirstEnemy" parent="." instance=ExtResource( 2 )]
-position = Vector2( 85.75, 84.75 )
+[node name="PushBox" parent="." instance=ExtResource( 2 )]
+position = Vector2( 82.1084, 65.8199 )
+
+[node name="Wall" parent="." instance=ExtResource( 3 )]
+position = Vector2( 73.6994, 228.954 )
