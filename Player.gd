@@ -1,9 +1,11 @@
 extends KinematicBody2D
 
 export (int) var speed = 3
+export (int) var hook_pull = 5
 
 var velocity = Vector2()
-var transfer_velocity = Vector2()
+var hook_velocity := Vector2(0,0)
+#var transfer_velocity = Vector2()
 var input = Vector2()
 
 func movement():
@@ -30,15 +32,36 @@ func movement():
 	else:
 		velocity.y = lerp(velocity.y,0,.35)
 
-func _process(delta):
-	pass
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.pressed:
+			# We clicked the mouse -> shoot()
+			$Hook.shoot(event.position - get_viewport().size * 0.5)
+		else:
+			# We released the mouse -> release()
+			$Hook.release()
+
 
 func _physics_process(delta):
 	movement()
-	#move_and_slide(velocity * 80)
-	var collision = move_and_collide(velocity * 80 * delta)
-	if collision:
-		velocity = velocity.slide(collision.normal)
+	# Grapple towards physics
+	if $Hook.hooked:
+		# `to_local($Hook.tip).normalized()` is the direction that the hook is pulling
+		hook_velocity = to_local($Hook.tip).normalized() * hook_pull
+		hook_velocity.y *= 1.65
+		# Reduce pull if going in opposite direction
+		if sign(hook_velocity.x) != sign(input.x):
+			hook_velocity.x *= 0.7
+		if sign(hook_velocity.y) != sign(input.y):
+			hook_velocity.y *= 0.7
+	else:
+		# Not hooked -> no hook velocity
+		hook_velocity = lerp(hook_velocity,Vector2(0,0),.15)
+	velocity += hook_velocity
+	move_and_slide(velocity * 80)
+	#var collision = move_and_collide(velocity * 80 * delta)
+	#if collision:
+	#	velocity = velocity.slide(collision.normal)
 	
 #	Box Pushing
 #	if collision:
