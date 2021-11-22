@@ -18,6 +18,10 @@ config/name="ProjectZero"
 run/main_scene="res://TestWorld.tscn"
 config/icon="res://icon.png"
 
+[global]
+
+layer=false
+
 [input]
 
 ui_left={
@@ -52,6 +56,15 @@ ui_down={
 , Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":1,"axis_value":1.0,"script":null)
  ]
 }
+
+[layer_names]
+
+2d_render/layer_1="Walls"
+2d_physics/layer_1="Walls"
+2d_render/layer_2="Player"
+2d_physics/layer_2="Player"
+2d_render/layer_3="Hook"
+2d_physics/layer_3="Hook"
 
 [physics]
 
