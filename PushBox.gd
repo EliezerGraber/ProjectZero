@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 var velocity = Vector2()
 var target_vel = Vector2()
+export(bool) var can_move = true
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -20,7 +21,8 @@ func set_velocity(vel):
 	target_vel = vel
 
 func _physics_process(delta):
-	var collision = move_and_slide(velocity * 60)
+	if can_move:
+		var collision = move_and_slide(velocity * 60)
 	velocity = lerp(velocity, target_vel, .15)
 	if abs(velocity.x)-abs(target_vel.x) < .25:
 		target_vel.x = 0

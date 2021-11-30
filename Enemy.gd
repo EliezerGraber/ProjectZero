@@ -1,27 +1,33 @@
 extends KinematicBody2D
 
 var _timer = null
+var dir_timer = 0
+var velocity = Vector2(0, 0)
+
+export(bool) var can_move = true
+export(Vector2) var dir = Vector2(0, 1)
+export(int) var move_range = 300
 export(Resource) var BULLET
 export(NodePath) onready var gun = get_node(gun) as Position2D
 export(NodePath) onready var bullet_parent = get_node(bullet_parent)
-var dir: int
 
 func _ready():
 	_timer = Timer.new()
 	add_child(_timer)
 	
 	_timer.connect("timeout", self, "shoot_test")
-	_timer.set_wait_time(0.5)
+	_timer.set_wait_time(3.5)
 	_timer.set_one_shot(false) # Make sure it loops
 	_timer.start()
-	dir = 1
 	
-func _process(delta):
-	move_and_slide(Vector2(0, 100) * dir)
-	if(position.y < 100):
-		dir = 1
-	if(position.y > 500):
-		dir = -1
+func _physics_process(delta):
+	if can_move:
+		velocity = lerp(velocity, dir * 80, .05)
+		var collision = move_and_collide(velocity * delta)
+		if collision or dir_timer >= move_range:
+			dir *= -1
+			dir_timer = 0
+		dir_timer += 1
 
 func shoot_test():
 	for i in range(0, 360, 45):

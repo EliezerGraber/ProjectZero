@@ -1,5 +1,6 @@
 extends Area2D
 
+var dir = Vector2(0, 0)
 export var direction: Vector2
 export var speed: int
 
@@ -10,6 +11,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	m_move_bullet(delta)
+	dir = direction * 80
 	
 func m_move_bullet(delta):
 	rotation_degrees = rad2deg(direction.angle())
@@ -22,5 +24,5 @@ func c_on_Bullet_body_entered(body):
 			combat_component = child
 	if(combat_component != null):
 		combat_component.c_hit(1)
+	if body.name != "Tip":
 		queue_free()
-	

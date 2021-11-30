@@ -10,12 +10,12 @@ config_version=4
 
 _global_script_classes=[  ]
 _global_script_class_icons={
-
 }
 
 [application]
 
 config/name="ProjectZero"
+run/main_scene="res://TestWorld.tscn"
 config/icon="res://icon.png"
 
 [global]
@@ -65,6 +65,10 @@ ui_down={
 2d_physics/layer_2="Player"
 2d_render/layer_3="Hook"
 2d_physics/layer_3="Hook"
+2d_render/layer_4="Enemy"
+2d_physics/layer_4="Enemy"
+2d_render/layer_5="Projectile"
+2d_physics/layer_5="Projectile"
 
 [physics]
 
