@@ -39,6 +39,7 @@ func release(retract: bool):
 		hooked_obj.can_move = true
 	flying = false	# Not flying anymore	
 	hooked = false	# Not attached anymore
+	get_parent().pull_type = "still"
 
 # Every graphics frame we update the visuals
 func _process(delta):

@@ -2,7 +2,7 @@ extends KinematicBody2D
 
 export(int) var speed = 3
 export(int) var hook_pull = 5
-export(String) var pull_type = "to_obj" # to_obj or to_player
+export(String) var pull_type = "still" # to_obj, to_player, still
 var velocity = Vector2()
 var hook_velocity := Vector2(0,0) # For pulling player to object
 var pulling_velocity := Vector2(0, 0) # For pulling object to player
@@ -36,16 +36,23 @@ func movement():
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.pressed:
-			if Input.is_mouse_button_pressed(1):
-				pull_type = "to_obj"
-			else:
-				pull_type = "to_player"
+			if $Hook.hooked or $Hook.flying and pull_type == "still":
+				if Input.is_mouse_button_pressed(1):
+					pull_type = "to_obj"
+				if Input.is_mouse_button_pressed(2):
+					pull_type = "to_player"
 			# We clicked the mouse -> shoot()
-			$Hook.shoot(event.position - get_viewport().size * 0.5)
+			if not ($Hook.hooked or $Hook.flying or $Hook.retracting) and Input.is_mouse_button_pressed(2):
+				$Hook.shoot(event.position - get_viewport().size * 0.5)
 		else:
 			# We released the mouse -> release() with retraction
-			if $Hook.hooked or $Hook.flying:
+			if $Hook.flying:
 				$Hook.release(true)
+			else:
+				pull_type = "still"
+	if event.is_action("release"):
+		if $Hook.hooked:
+			$Hook.release(true)
 
 
 func _physics_process(delta):
@@ -53,7 +60,9 @@ func _physics_process(delta):
 	movement()
 	
 	# Pull you towards thing physics
-	if $Hook.hooked and Input.is_mouse_button_pressed(1):
+	if $Hook.hooked and pull_type == "to_obj":
+		if not Input.is_mouse_button_pressed(1):
+			pull_type = "still"
 		# `to_local($Hook.tip).normalized()` is the direction that the hook is pulling
 		hook_velocity = to_local($Hook.tip).normalized() * hook_pull
 		# Reduce pull if going in opposite direction
@@ -62,7 +71,9 @@ func _physics_process(delta):
 		if sign(hook_velocity.y) != sign(input.y):
 			hook_velocity.y *= 0.7
 	# Pull thing towards you physics
-	elif $Hook.hooked and Input.is_mouse_button_pressed(2):
+	elif $Hook.hooked and pull_type == "to_player":
+		if not Input.is_mouse_button_pressed(2):
+			pull_type = "still"
 		if $Hook.hooked_obj is KinematicBody2D:
 			$Hook.hooked_obj.can_move = false
 			$Hook.can_move = false
@@ -71,7 +82,7 @@ func _physics_process(delta):
 			$Hook/Tip.global_position = $Hook.tip
 			$Hook/Tip.move_and_collide(pulling_velocity * delta)
 			$Hook.tip = $Hook/Tip.global_position
-	else:
+	elif pull_type == "still":
 		# Not hooked -> no hook velocity
 		if $Hook.hooked_obj is KinematicBody2D:
 			pulling_velocity = lerp(pulling_velocity, Vector2(0, 0), .05)
