@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
 export(int) var speed = 3
-export(int) var hook_pull = 5
+export(int) var hook_pull = 10
 export(String) var pull_type = "still" # to_obj, to_player, still
 var velocity = Vector2()
 var hook_velocity := Vector2(0,0) # For pulling player to object
@@ -64,7 +64,7 @@ func _physics_process(delta):
 		if not Input.is_mouse_button_pressed(1):
 			pull_type = "still"
 		# `to_local($Hook.tip).normalized()` is the direction that the hook is pulling
-		hook_velocity = to_local($Hook.tip).normalized() * hook_pull
+		hook_velocity = lerp(hook_velocity, to_local($Hook.tip).normalized() * hook_pull, .1)
 		# Reduce pull if going in opposite direction
 		if sign(hook_velocity.x) != sign(input.x):
 			hook_velocity.x *= 0.7
@@ -77,11 +77,11 @@ func _physics_process(delta):
 		if $Hook.hooked_obj is KinematicBody2D:
 			$Hook.hooked_obj.can_move = false
 			$Hook.can_move = false
-			pulling_velocity = to_local($Hook.tip).normalized() * hook_pull * -80
-			$Hook.hooked_obj.move_and_collide(pulling_velocity * delta)
-			$Hook/Tip.global_position = $Hook.tip
-			$Hook/Tip.move_and_collide(pulling_velocity * delta)
-			$Hook.tip = $Hook/Tip.global_position
+			pulling_velocity = lerp(pulling_velocity, to_local($Hook.tip).normalized() * hook_pull, .1)
+			$Hook.hooked_obj.move_and_collide(pulling_velocity * -80 * delta)
+			#$Hook/Tip.global_position = $Hook.tip
+			#$Hook/Tip.move_and_collide(pulling_velocity * delta)
+			#$Hook.tip = $Hook/Tip.global_position
 	elif pull_type == "still":
 		# Not hooked -> no hook velocity
 		if $Hook.hooked_obj is KinematicBody2D:
@@ -90,6 +90,7 @@ func _physics_process(delta):
 			$Hook/Tip.global_position = $Hook.tip
 			$Hook/Tip.move_and_collide(pulling_velocity * delta)
 			$Hook.tip = $Hook/Tip.global_position
+			$Hook.hooked_obj.can_move = true
 		
 		hook_velocity = lerp(hook_velocity, Vector2(0,0), .15)
 
@@ -101,7 +102,7 @@ func _physics_process(delta):
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
 		if collision:
-			if pull_type == "to_obj":
+			if collision.collider == $Hook.hooked_obj and (pull_type == "to_obj" or pull_type == "to_player"):
 				$Hook.release(false) # Release without retracting
 	
 	#var collision = move_and_collide(velocity * 80 * delta)

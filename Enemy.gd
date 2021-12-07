@@ -24,7 +24,7 @@ func _physics_process(delta):
 	if can_move:
 		velocity = lerp(velocity, dir * 80, .05)
 		var collision = move_and_collide(velocity * delta)
-		if collision or dir_timer >= move_range:
+		if (collision and collision.collider.get_collision_layer() != 2) or dir_timer >= move_range:
 			dir *= -1
 			dir_timer = 0
 		dir_timer += 1
