@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Enemy.gd" type="Script" id=1]
+[ext_resource path="res://Bullet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://CombatComponent.tscn" type="PackedScene" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 32 )
+
+[node name="Enemy" type="KinematicBody2D"]
+collision_layer = 8
+collision_mask = 27
+script = ExtResource( 1 )
+BULLET = ExtResource( 2 )
+gun = NodePath("Gun")
+
+[node name="Gun" type="Position2D" parent="."]
+position = Vector2( 40, 40 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="icon" type="Sprite" parent="."]
+modulate = Color( 1, 0, 0.210938, 1 )
+texture = ExtResource( 3 )
+
+[node name="CombatComponent" parent="." instance=ExtResource( 4 )]
+position = Vector2( 0.293724, -4.18553 )
