@@ -12,13 +12,14 @@ var tip := Vector2(0,0)			# The global position the tip should be in
 								# moves.
 
 var velocity = Vector2()
-const chain_speed = 50	# The speed with which the chain moves
+export(int) var chain_speed = 50	# The speed with which the chain moves
 
 var retracting = false # Whether the chain irs moving back to the playe
 var flying = false	# Whether the chain is moving through the air
 var hooked = false	# Whether the chain has connected to a wall
 var hooked_obj: Node
 var hooked_offset = Vector2(0, 0)
+var max_distance = Vector2(500, 500) # Distance from player until grapple retracts
 
 export(bool) var can_move = true
 
@@ -78,10 +79,12 @@ func _physics_process(delta):
 			hooked = true	# Got something!
 			flying = false	# Not flying anymore
 			hooked_obj = collision.collider
+		if abs(global_position.x - tip.x) >= max_distance.x or abs(global_position.y - tip.y) >= max_distance.y:
+			release(true)
 	elif hooked:
 		# Can't grab Bullet because it's an Area2D
 		#if get_parent().pull_type == "still":
-		$Tip.position = to_local(hooked_obj.global_position) + hooked_offset		
+		$Tip.position = to_local(hooked_obj.global_position) + hooked_offset
 	elif retracting:
 		velocity = lerp(velocity, get_parent().to_local(tip).normalized() * -chain_speed * 50, 0.1)
 		$Tip.move_and_slide(velocity)
