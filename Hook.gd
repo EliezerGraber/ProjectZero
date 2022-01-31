@@ -19,7 +19,8 @@ var flying = false	# Whether the chain is moving through the air
 var hooked = false	# Whether the chain has connected to a wall
 var hooked_obj: Node
 var hooked_offset = Vector2(0, 0)
-var max_distance = Vector2(500, 500) # Distance from player until grapple retracts
+var max_distance = 500 # Distance from player until grapple retracts
+var length = 0 # Length of the chain
 
 export(bool) var can_move = true
 
@@ -41,6 +42,7 @@ func release(retract: bool):
 		hooked_obj.can_move = true
 	flying = false	# Not flying anymore	
 	hooked = false	# Not attached anymore
+	hooked_obj = null
 	get_parent().pull_type = "still"
 
 # Every graphics frame we update the visuals
@@ -79,7 +81,8 @@ func _physics_process(delta):
 			hooked = true	# Got something!
 			flying = false	# Not flying anymore
 			hooked_obj = collision.collider
-		if abs(global_position.x - tip.x) >= max_distance.x or abs(global_position.y - tip.y) >= max_distance.y:
+		length = Vector2(get_parent().global_position - tip).length()
+		if length >= max_distance:
 			release(true)
 	elif hooked:
 		# Can't grab Bullet because it's an Area2D

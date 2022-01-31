@@ -6,8 +6,10 @@ export(String) var pull_type = "still" # to_obj, to_player, still
 var velocity = Vector2()
 var hook_velocity := Vector2(0,0) # For pulling player to object
 var pulling_velocity := Vector2(0, 0) # For pulling object to player
+var dragging_velocity := Vector2(0, 0) # For dragging objects around with mouse
 #var transfer_velocity = Vector2()
-var input = Vector2()
+var input := Vector2(0, 0)
+var mouse_pos_l := Vector2(0, 0) # Limited mouse position around player
 
 func movement():
 	# Inputs
@@ -63,6 +65,7 @@ func _physics_process(delta):
 	if $Hook.hooked and pull_type == "to_obj":
 		if not Input.is_mouse_button_pressed(1):
 			pull_type = "still"
+			$Hook.length = Vector2(self.global_position - $Hook.tip).length()
 		# `to_local($Hook.tip).normalized()` is the direction that the hook is pulling
 		hook_velocity = lerp(hook_velocity, to_local($Hook.tip).normalized() * hook_pull, .07)
 		# Reduce pull if going in opposite direction
@@ -74,10 +77,12 @@ func _physics_process(delta):
 	elif $Hook.hooked and pull_type == "to_player":
 		if not Input.is_mouse_button_pressed(2):
 			pull_type = "still"
+			pulling_velocity = Vector2(0,0)
+			$Hook.length = Vector2(self.global_position - $Hook.tip).length()
 		if $Hook.hooked_obj is KinematicBody2D:
 			$Hook.hooked_obj.can_move = false
 			$Hook.can_move = false
-			pulling_velocity = lerp(pulling_velocity, to_local($Hook.hooked_obj.global_position).normalized() * hook_pull * (2 / $Hook.hooked_obj.size), .08)
+			pulling_velocity = lerp(pulling_velocity, to_local($Hook.hooked_obj.global_position).normalized() * hook_pull * (2 / $Hook.hooked_obj.size), .1)
 			$Hook.hooked_obj.set_velocity(-pulling_velocity)
 			#$Hook.hooked_obj.move_and_collide(pulling_velocity * -80 * delta)
 			#$Hook/Tip.global_position = $Hook.tip
@@ -91,7 +96,18 @@ func _physics_process(delta):
 			#$Hook/Tip.global_position = $Hook.tip
 			#$Hook/Tip.move_and_collide(pulling_velocity * delta)
 			#$Hook.tip = $Hook/Tip.global_position
-			$Hook.hooked_obj.can_move = true
+			#$Hook.hooked_obj.can_move = true
+			
+			# Limited mouse position
+			mouse_pos_l = lerp(mouse_pos_l,Vector2(clamp(get_global_mouse_position().x, self.global_position.x - $Hook.length, self.global_position.x + $Hook.length), clamp(get_global_mouse_position().y, self.global_position.y - $Hook.length, self.global_position.y + $Hook.length)),1)
+			
+			#print("Difference: " + str(Vector2(self.global_position - $Hook.tip).length() - $Hook.length) + "\nLength: " + str($Hook.length))
+			dragging_velocity = lerp(dragging_velocity, $Hook.hooked_obj.to_local(mouse_pos_l).normalized() * hook_pull * (2 / $Hook.hooked_obj.size), .2)
+			print(Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length())
+			if Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length() < 50:
+				dragging_velocity /= 2
+			
+			$Hook.hooked_obj.set_velocity(dragging_velocity)
 		
 		hook_velocity = lerp(hook_velocity, Vector2(0,0), .15)
 
