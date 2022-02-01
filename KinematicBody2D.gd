@@ -24,7 +24,7 @@ func set_velocity(vel):
 func _physics_process(delta):
 	move_and_slide(velocity * 60)
 		
-	velocity = lerp(velocity, target_vel, .15)
+	velocity = lerp(velocity, target_vel, .1)
 	if abs(velocity.x)-abs(target_vel.x) < .25:
 		target_vel.x = 0
 	if abs(velocity.y)-abs(target_vel.y) < .25:

@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
 export(int) var speed = 3
-export(int) var hook_pull = 20
+export(int) var hook_pull = 10
 export(String) var pull_type = "still" # to_obj, to_player, still
 var velocity = Vector2()
 var hook_velocity := Vector2(0,0) # For pulling player to object
@@ -38,27 +38,23 @@ func movement():
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.pressed:
-			if not $Hook.hooked:
+			if $Hook.hooked or $Hook.flying and pull_type == "still":
 				if Input.is_mouse_button_pressed(1):
 					pull_type = "to_obj"
 				if Input.is_mouse_button_pressed(2):
-					pull_type = "still"
+					pull_type = "to_player"
 			# We clicked the mouse -> shoot()
-			if not ($Hook.hooked or $Hook.flying or $Hook.retracting) and (Input.is_mouse_button_pressed(1) or Input.is_mouse_button_pressed(2)):
+			if not ($Hook.hooked or $Hook.flying or $Hook.retracting) and Input.is_mouse_button_pressed(2):
 				$Hook.shoot(event.position - get_viewport().size * 0.5)
-		#else:
+		else:
 			# We released the mouse -> release() with retraction
-			#if $Hook.flying:
-			#	$Hook.release(true)
-			#else:
-			#	pull_type = "still"
-	if event.is_action_released("release"):
-		if $Hook.hooked or $Hook.flying:
-			# We released the mouse -> release() with retraction
+			if $Hook.flying:
+				$Hook.release(true)
+			else:
+				pull_type = "still"
+	if event.is_action("release"):
+		if $Hook.hooked:
 			$Hook.release(true)
-	if event is InputEventMouseMotion:
-		# Limited mouse position
-		mouse_pos_l = lerp(mouse_pos_l,Vector2(clamp(get_global_mouse_position().x, self.global_position.x - $Hook.length, self.global_position.x + $Hook.length), clamp(get_global_mouse_position().y, self.global_position.y - $Hook.length, self.global_position.y + $Hook.length)),1)
 
 
 func _physics_process(delta):
@@ -67,36 +63,32 @@ func _physics_process(delta):
 	
 	# Pull you towards thing physics
 	if $Hook.hooked and pull_type == "to_obj":
-		#if not Input.is_mouse_button_pressed(1):
-			#pull_type = "still"
-			#$Hook.length = Vector2(self.global_position - $Hook.tip).length()
+		if not Input.is_mouse_button_pressed(1):
+			pull_type = "still"
+			$Hook.length = Vector2(self.global_position - $Hook.tip).length()
 		# `to_local($Hook.tip).normalized()` is the direction that the hook is pulling
 		hook_velocity = lerp(hook_velocity, to_local($Hook.tip).normalized() * hook_pull, .07)
 		# Reduce pull if going in opposite direction
 		if sign(hook_velocity.x) != sign(input.x) and input.x != 0:
-			hook_velocity.x *= 0.8
-		elif sign(hook_velocity.x) == sign(input.x) and input.x != 0:
-			hook_velocity.x *= 1.2
+			hook_velocity.x *= 0.7
 		if sign(hook_velocity.y) != sign(input.y) and input.y != 0:
-			hook_velocity.y *= 0.8
-		elif sign(hook_velocity.y) == sign(input.y) and input.y != 0:
-			hook_velocity.y *= 1.2
+			hook_velocity.y *= 0.7
 	# Pull thing towards you physics
-	#elif $Hook.hooked and pull_type == "to_player":
-	#	if not Input.is_mouse_button_pressed(2):
-	#		pull_type = "still"
-	#		pulling_velocity = Vector2(0,0)
-	#		#$Hook.length = Vector2(self.global_position - $Hook.tip).length()
-	#	if $Hook.hooked_obj is KinematicBody2D:
-	#		$Hook.hooked_obj.can_move = false
-	#		$Hook.can_move = false
-	#		pulling_velocity = lerp(pulling_velocity, to_local($Hook.hooked_obj.global_position).normalized() * hook_pull * (2 / $Hook.hooked_obj.size), .1)
-	#		$Hook.hooked_obj.set_velocity(-pulling_velocity)
+	elif $Hook.hooked and pull_type == "to_player":
+		if not Input.is_mouse_button_pressed(2):
+			pull_type = "still"
+			pulling_velocity = Vector2(0,0)
+			$Hook.length = Vector2(self.global_position - $Hook.tip).length()
+		if $Hook.hooked_obj is KinematicBody2D:
+			$Hook.hooked_obj.can_move = false
+			$Hook.can_move = false
+			pulling_velocity = lerp(pulling_velocity, to_local($Hook.hooked_obj.global_position).normalized() * hook_pull * (2 / $Hook.hooked_obj.size), .1)
+			$Hook.hooked_obj.set_velocity(-pulling_velocity)
 			#$Hook.hooked_obj.move_and_collide(pulling_velocity * -80 * delta)
 			#$Hook/Tip.global_position = $Hook.tip
 			#$Hook/Tip.move_and_collide(pulling_velocity * delta)
 			#$Hook.tip = $Hook/Tip.global_position
-	elif $Hook.hooked and pull_type == "still":
+	elif pull_type == "still":
 		# Not hooked -> no hook velocity
 		if $Hook.hooked_obj is KinematicBody2D:
 			#pulling_velocity = lerp(pulling_velocity, Vector2(0, 0), .05)
@@ -104,22 +96,23 @@ func _physics_process(delta):
 			#$Hook/Tip.global_position = $Hook.tip
 			#$Hook/Tip.move_and_collide(pulling_velocity * delta)
 			#$Hook.tip = $Hook/Tip.global_position
-			#$Hook.hooked_obj.can_move = 
+			#$Hook.hooked_obj.can_move = true
+			
+			# Limited mouse position
+			mouse_pos_l = lerp(mouse_pos_l,Vector2(clamp(get_global_mouse_position().x, self.global_position.x - $Hook.length, self.global_position.x + $Hook.length), clamp(get_global_mouse_position().y, self.global_position.y - $Hook.length, self.global_position.y + $Hook.length)),1)
 			
 			#print("Difference: " + str(Vector2(self.global_position - $Hook.tip).length() - $Hook.length) + "\nLength: " + str($Hook.length))
-			dragging_velocity = lerp(dragging_velocity, $Hook.hooked_obj.to_local(mouse_pos_l).normalized() * hook_pull * (4 / $Hook.hooked_obj.size), .2)
-			#print(Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length())
+			dragging_velocity = lerp(dragging_velocity, $Hook.hooked_obj.to_local(mouse_pos_l).normalized() * hook_pull * (2 / $Hook.hooked_obj.size), .2)
+			print(Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length())
 			if Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length() < 50:
 				dragging_velocity /= 2
 			
 			$Hook.hooked_obj.set_velocity(dragging_velocity)
-	
+		
+		hook_velocity = lerp(hook_velocity, Vector2(0,0), .15)
+
 	# Move
-	clamp(hook_velocity.x, -hook_pull,hook_pull)
-	clamp(hook_velocity.y, -hook_pull,hook_pull)
 	velocity += hook_velocity
-	if not $Hook.hooked:
-		hook_velocity = lerp(hook_velocity, Vector2(0,0), .07)
 	move_and_slide(velocity * 80)
 	
 	if $Hook.hooked_obj is KinematicBody2D:
