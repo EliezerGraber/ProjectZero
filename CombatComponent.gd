@@ -16,7 +16,7 @@ func c_hit(damage):
 func m_die():
 	print('dead')
 	cur_hp = 0
-	get_parent().free()
+	get_parent().queue_free()
 	
 func m_damage(damage):
 	cur_hp = cur_hp - damage

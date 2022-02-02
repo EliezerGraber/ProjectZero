@@ -46,7 +46,7 @@ func _input(event: InputEvent) -> void:
 			# We clicked the mouse -> shoot()
 			if not ($Hook.hooked or $Hook.flying or $Hook.retracting) and (Input.is_mouse_button_pressed(1) or Input.is_mouse_button_pressed(2)):
 				$Hook.shoot(event.position - get_viewport().size * 0.5)
-	if event.is_action_released("release"):
+	if event.is_action_released("release") or $Hook.hooked and not is_instance_valid($Hook.hooked_obj):
 		if $Hook.hooked or $Hook.flying:
 			# We released the mouse -> release() with retraction
 			$Hook.release(true)
@@ -63,22 +63,27 @@ func _physics_process(delta):
 	if $Hook.hooked and pull_type == "to_obj":
 		hook_velocity = lerp(hook_velocity, to_local($Hook.tip).normalized() * hook_pull, .09)
 		# Amplify pull depending on direction
-		if sign(hook_velocity.x) != sign(input.x) and input.x != 0:
-			hook_velocity.x *= 0.9
-		elif sign(hook_velocity.x) == sign(input.x) and input.x != 0:
-			hook_velocity.x *= 1.1
-		if sign(hook_velocity.y) != sign(input.y) and input.y != 0:
-			hook_velocity.y *= 0.9
-		elif sign(hook_velocity.y) == sign(input.y) and input.y != 0:
-			hook_velocity.y *= 1.1
+		#if sign(input.x) == 1:
+		#	hook_velocity.x *= 1.1
+		#elif sign(input.x) == -1:
+		#	hook_velocity.x *= 0.9
+		#if sign(input.y) == 1:
+		#	hook_velocity.y *= 1.1
+		#elif sign(input.y) == -1:
+		#	hook_velocity.y *= 0.9
 	elif $Hook.hooked and pull_type == "still":
-		if $Hook.hooked_obj is KinematicBody2D:
-			dragging_velocity = lerp(dragging_velocity, $Hook.hooked_obj.to_local(mouse_pos_l).normalized() * hook_pull * (4 / $Hook.hooked_obj.size), .2)
-			#print(Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length())
-			if Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length() < 50:
-				dragging_velocity /= 2
+		if is_instance_valid($Hook.hooked_obj):
+			if $Hook.hooked_obj is KinematicBody2D:
+				dragging_velocity = lerp(dragging_velocity, $Hook.hooked_obj.to_local(mouse_pos_l).normalized() * hook_pull * (4 / $Hook.hooked_obj.size), .3)
+				#print(Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length())
+				if Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length() < 100:
+					dragging_velocity /= 2
+				if Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length() < 50:
+					dragging_velocity /= 4
+				if Vector2(mouse_pos_l - $Hook.hooked_obj.global_position).length() < 10:
+					dragging_velocity /= 8
 			
-			$Hook.hooked_obj.set_velocity(dragging_velocity)
+				$Hook.hooked_obj.set_velocity(dragging_velocity)
 	
 	### Movement
 	## Pulling
@@ -87,14 +92,18 @@ func _physics_process(delta):
 		hook_velocity = lerp(hook_velocity, Vector2(0,0), .09)
 	# Cap it
 	hook_velocity = Vector2(clamp(hook_velocity.x, -hook_pull,hook_pull),clamp(hook_velocity.y, -hook_pull,hook_pull))
-	if hook_velocity.length() > 10:
-		print(hook_velocity)
 	
 	## Moooooove
 	velocity += hook_velocity
 	move_and_slide(velocity * 80)
 	
+	# Move limited mouse pos if player is moving
+	if velocity.length() > 0:
+		# Limited mouse position
+		mouse_pos_l = lerp(mouse_pos_l,Vector2(clamp(get_global_mouse_position().x, self.global_position.x - $Hook.length, self.global_position.x + $Hook.length), clamp(get_global_mouse_position().y, self.global_position.y - $Hook.length, self.global_position.y + $Hook.length)),1)
+		
 	# Release if touching player
-	if $Hook.hooked_obj is KinematicBody2D:
-		if $Hook.hooked_obj.touching_player() and pull_type == "to_obj":
+	if is_instance_valid($Hook.hooked_obj):
+		if $Hook.hooked_obj is KinematicBody2D:
+			if $Hook.hooked_obj.touching_player() and pull_type == "to_obj":
 				$Hook.release(false) # Release without retracting

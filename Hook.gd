@@ -19,7 +19,7 @@ var flying = false	# Whether the chain is moving through the air
 var hooked = false	# Whether the chain has connected to a wall
 var hooked_obj: Node
 var hooked_offset = Vector2(0, 0)
-var max_distance = 500 # Distance from player until grapple retracts
+var max_distance = 600 # Distance from player until grapple retracts
 var length = 500 # Length of the chain
 
 export(bool) var can_move = true
@@ -38,8 +38,9 @@ func release(retract: bool):
 		$Tip.set_collision_mask_bit(1, true) # Allow tip to collide with player
 		retracting = true
 	can_move = true
-	if hooked_obj is KinematicBody2D:
-		hooked_obj.can_move = true
+	if is_instance_valid(hooked_obj):
+		if hooked_obj is KinematicBody2D:
+			hooked_obj.can_move = true
 	flying = false	# Not flying anymore	
 	hooked = false	# Not attached anymore
 	hooked_obj = null
@@ -50,7 +51,7 @@ func _process(delta):
 	if not retracting:
 		$Tip.set_collision_mask_bit(1, false) # Prevent tip from colliding with player
 	# Disable or enable colliding with objects
-	if hooked:
+	if hooked or retracting:
 		$Tip.set_collision_mask_bit(0, false)
 		$Tip.set_collision_mask_bit(3, false)
 	else:
@@ -81,15 +82,17 @@ func _physics_process(delta):
 			hooked = true	# Got something!
 			flying = false	# Not flying anymore
 			hooked_obj = collision.collider
-			if hooked_obj is KinematicBody2D:
-				hooked_obj.can_move = false
+			if is_instance_valid(hooked_obj):
+				if hooked_obj is KinematicBody2D:
+					hooked_obj.can_move = false
 		#length = Vector2(get_parent().global_position - tip).length()
 		if Vector2(get_parent().global_position - tip).length() >= max_distance:
 			release(true)
 	elif hooked:
 		# Can't grab Bullet because it's an Area2D
 		#if get_parent().pull_type == "still":
-		$Tip.position = to_local(hooked_obj.global_position) + hooked_offset
+		if is_instance_valid(hooked_obj):
+			$Tip.position = to_local(hooked_obj.global_position) + hooked_offset
 	elif retracting:
 		velocity = lerp(velocity, get_parent().to_local(tip).normalized() * -chain_speed * 50, 0.1)
 		$Tip.move_and_slide(velocity)
@@ -98,8 +101,9 @@ func _physics_process(delta):
 			if collision:
 				if collision.collider.name == "Player":
 					retracting = false
-					if hooked_obj is KinematicBody2D:
-						hooked_obj.can_move = true
+					if is_instance_valid(hooked_obj):
+						if hooked_obj is KinematicBody2D:
+							hooked_obj.can_move = true
 					velocity = Vector2(0, 0)
 	#if can_move:
 	tip = $Tip.global_position	# set `tip` as starting position for next frame
