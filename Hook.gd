@@ -81,6 +81,8 @@ func _physics_process(delta):
 			hooked = true	# Got something!
 			flying = false	# Not flying anymore
 			hooked_obj = collision.collider
+			if hooked_obj is KinematicBody2D:
+				hooked_obj.can_move = false
 		#length = Vector2(get_parent().global_position - tip).length()
 		if Vector2(get_parent().global_position - tip).length() >= max_distance:
 			release(true)

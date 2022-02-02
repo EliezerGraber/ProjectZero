@@ -30,12 +30,13 @@ func _physics_process(delta):
 	collision = move_and_collide(velocity * 60 * delta)
 	if can_move: # Normal enemy movement
 		velocity = lerp(velocity, dir, .05)
-		if (collision and collision.collider.get_collision_layer() != 2) or dir_timer >= move_range:
+		if collision or dir_timer >= move_range:
 			dir *= -1
+			move_and_collide(dir * 60 * delta)
 			dir_timer = 0
 		dir_timer += 1
 	else: # Being pulled
-		velocity = lerp(velocity, target_vel, .15)
+		velocity = lerp(velocity, target_vel, .05)
 		if abs(velocity.x)-abs(target_vel.x) < .25:
 			target_vel.x = 0
 		if abs(velocity.y)-abs(target_vel.y) < .25:
