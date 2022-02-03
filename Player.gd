@@ -25,12 +25,12 @@ func movement():
 	)
 	
 	# Movement velocity
-	if input.x != 0:
+	if input.x != 0 and (pull_type == "still" or not $Hook.hooked):
 		velocity.x = clamp(velocity.x+(input.x*.4),-speed,speed)
 	else:
 		velocity.x = lerp(velocity.x,0,.25)
 	
-	if input.y != 0:
+	if input.y != 0 and (pull_type == "still" or not $Hook.hooked):
 		velocity.y = clamp(velocity.y+(input.y*.4),-speed,speed)
 	else:
 		velocity.y = lerp(velocity.y,0,.25)
@@ -45,7 +45,7 @@ func _input(event: InputEvent) -> void:
 					pull_type = "still"
 			# We clicked the mouse -> shoot()
 			if not ($Hook.hooked or $Hook.flying or $Hook.retracting) and (Input.is_mouse_button_pressed(1) or Input.is_mouse_button_pressed(2)):
-				$Hook.shoot(event.position - get_viewport().size * 0.5)
+				$Hook.shoot(to_local(get_global_mouse_position()))
 	if event.is_action_released("release") or $Hook.hooked and not is_instance_valid($Hook.hooked_obj):
 		if $Hook.hooked or $Hook.flying:
 			# We released the mouse -> release() with retraction
@@ -63,14 +63,14 @@ func _physics_process(delta):
 	if $Hook.hooked and pull_type == "to_obj":
 		hook_velocity = lerp(hook_velocity, to_local($Hook.tip).normalized() * hook_pull, .09)
 		# Amplify pull depending on direction
-		#if sign(input.x) == 1:
-		#	hook_velocity.x *= 1.1
-		#elif sign(input.x) == -1:
-		#	hook_velocity.x *= 0.9
-		#if sign(input.y) == 1:
-		#	hook_velocity.y *= 1.1
-		#elif sign(input.y) == -1:
-		#	hook_velocity.y *= 0.9
+		if input.x == 1 and hook_velocity.x < speed/2:
+			hook_velocity.x = lerp(hook_velocity.x, speed/2, .09)
+		elif input.x == -1 and hook_velocity.x > -speed/2:
+			hook_velocity.x = lerp(hook_velocity.x, -speed/2, .09)
+		if input.y == 1 and hook_velocity.y < speed/2:
+			hook_velocity.y = lerp(hook_velocity.y, speed/2, .09)
+		elif input.y == -1 and hook_velocity.y > -speed/2:
+			hook_velocity.y = lerp(hook_velocity.y, -speed/2, .09)
 	elif $Hook.hooked and pull_type == "still":
 		if is_instance_valid($Hook.hooked_obj):
 			if $Hook.hooked_obj is KinematicBody2D:

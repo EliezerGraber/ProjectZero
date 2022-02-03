@@ -57,16 +57,17 @@ func _process(delta):
 	else:
 		$Tip.set_collision_mask_bit(0, true)
 		$Tip.set_collision_mask_bit(3, true)
+		
+	## Visuals
+	if flying or hooked or retracting:	# Only visible if flying or attached to something:
+		var tip_loc = to_local(tip)	# Easier to work in local coordinates
+		# We rotate the links (= chain) and the tip to fit on the line between self.position (= origin = player.position) and the tip
+		links.rotation = self.position.angle_to_point(tip_loc) - deg2rad(90)
+		$Tip.rotation = self.position.angle_to_point(tip_loc) - deg2rad(90)
+		links.position = tip_loc						# The links are moved to start at the tip
+		links.region_rect.size.y = tip_loc.length() * 2		# and get extended for the distance between (0,0) and the tip
 	self.visible = flying or hooked or retracting	# Only visible if flying or attached to something
-	if not self.visible:
-		return	# Not visible -> nothing to draw
-	var tip_loc = to_local(tip)	# Easier to work in local coordinates
-	# We rotate the links (= chain) and the tip to fit on the line between self.position (= origin = player.position) and the tip
-	links.rotation = self.position.angle_to_point(tip_loc) - deg2rad(90)
-	$Tip.rotation = self.position.angle_to_point(tip_loc) - deg2rad(90)
-	links.position = tip_loc						# The links are moved to start at the tip
-	links.region_rect.size.y = tip_loc.length() * 2		# and get extended for the distance between (0,0) and the tip
-
+		
 # Every physics frame we update the tip position
 func _physics_process(delta):
 	#if can_move:
