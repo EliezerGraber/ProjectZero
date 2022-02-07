@@ -13,5 +13,5 @@ export (int) var max_distance = 100
 func _physics_process(delta):
 #	self.position = lerp(self.position,$"../Player".position,.1)
 	# CHANGE THIS LATER
-	if $"../Player":
+	if is_instance_valid($"../Player"):
 		self.position = lerp(self.position,$"../Player".position + get_global_mouse_position().normalized(),0.1)
