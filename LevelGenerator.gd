@@ -4,9 +4,9 @@ extends Node2D
 var Room = preload("res://Maker.tscn")
 var Player = preload("res://Player.tscn")
 var tile_size = 32
-var num_rooms = 55
-export(int) var w = 35
-export(int) var h = 35
+var num_rooms = 45
+export(int) var w = 40
+export(int) var h = 40
 var wanted_rooms = 10
 var spread = 200
 var path   #will be Astar pathfinding object
@@ -17,7 +17,7 @@ var play_mode = false
 var player = null
 var dead_ends = []
 var dead_end_rooms = []
-onready var Map = $TileMap
+onready var Map = $Navigation2D/TileMap
 
 func _ready():
 	randomize()
