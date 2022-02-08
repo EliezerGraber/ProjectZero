@@ -152,11 +152,19 @@ func carve_path(pos1, pos2):
 	for x in range (pos1.x, pos2.x, x_diff):
 		Map.set_cell(x, x_y.y, 2)
 		Map.set_cell(x, x_y.y + y_diff, 2)
+		Map.set_cell(x, x_y.y + 2*y_diff, 2)
+		Map.set_cell(x, x_y.y + 3*y_diff, 2)
 		Map.set_cell(x, x_y.y - y_diff, 2)
+		Map.set_cell(x, x_y.y - 2*y_diff, 2)
+		Map.set_cell(x, x_y.y - 3*y_diff, 2)
 	for y in range (pos1.y, pos2.y, y_diff):
 		Map.set_cell(y_x.x, y, 2)
 		Map.set_cell(y_x.x + x_diff, y, 2)
+		Map.set_cell(y_x.x + 2*x_diff, y, 2)
+		Map.set_cell(y_x.x + 3*x_diff, y, 2)
 		Map.set_cell(y_x.x - x_diff, y, 2)
+		Map.set_cell(y_x.x - 2*x_diff, y, 2)
+		Map.set_cell(y_x.x - 3*x_diff, y, 2)
 
 func find_start_room():
 	start_point = dead_ends[randi() % dead_ends.size()]
