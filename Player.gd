@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
 export(int) var speed = 5
-export(int) var hook_pull = 20
+export(int) var hook_pull = 7
 export(String) var pull_type = "still" # to_obj, to_player, still
 var velocity = Vector2()
 var hook_velocity := Vector2(0,0) # For pulling player to object
