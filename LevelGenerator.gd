@@ -2,11 +2,11 @@ extends Node2D
 
 
 var Room = preload("res://Maker.tscn")
-var Player = preload("res://Character.tscn")
+var Player = preload("res://Player.tscn")
 var tile_size = 32
 var num_rooms = 55
-var w = 10
-var h = 10
+export(int) var w = 35
+export(int) var h = 35
 var wanted_rooms = 10
 var spread = 200
 var path   #will be Astar pathfinding object
@@ -58,14 +58,15 @@ func remove_room(rand_room):
 #func _process(delta):
 #	update()
 
-func _input(event):
+#func _input(event):
 #	if event.is_action_pressed('ui_focus_next'):
 #		make_map()
-	if event.is_action_pressed('ui_cancel'):
-		player = Player.instance()
-		add_child(player)
-		player.position = path.get_point_position(start_point)
-		play_mode = true
+#	if event.is_action_pressed('ui_cancel'):
+#		if !play_mode:
+#			player = Player.instance()
+#			add_child(player)
+#			player.position = path.get_point_position(start_point)
+#			play_mode = true
 
 func find_mst(nodes):
 	#Prim's algorithm
@@ -151,9 +152,11 @@ func carve_path(pos1, pos2):
 	for x in range (pos1.x, pos2.x, x_diff):
 		Map.set_cell(x, x_y.y, 2)
 		Map.set_cell(x, x_y.y + y_diff, 2)
+		Map.set_cell(x, x_y.y - y_diff, 2)
 	for y in range (pos1.y, pos2.y, y_diff):
 		Map.set_cell(y_x.x, y, 2)
 		Map.set_cell(y_x.x + x_diff, y, 2)
+		Map.set_cell(y_x.x - x_diff, y, 2)
 
 func find_start_room():
 	start_point = dead_ends[randi() % dead_ends.size()]
@@ -162,3 +165,7 @@ func find_start_room():
 		var p_pos = Map.world_to_map(path.get_point_position(start_point))
 		if r_pos == p_pos:
 			start_room == room
+	player = Player.instance()
+	add_child(player)
+	player.position = path.get_point_position(start_point)
+	play_mode = true
