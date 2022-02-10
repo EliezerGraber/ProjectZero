@@ -25,7 +25,9 @@ func _ready():
 
 func set_velocity(vel):
 	target_vel = vel
-	
+func explode(vel):
+	velocity += vel
+		
 func _physics_process(delta):
 	collision = move_and_collide(velocity * 60 * delta)
 	if can_move: # Normal enemy movement
@@ -35,12 +37,13 @@ func _physics_process(delta):
 			move_and_collide(dir * 60 * delta)
 			dir_timer = 0
 		dir_timer += 1
+		velocity += target_vel
 	else: # Being pulled
 		velocity = lerp(velocity, target_vel, .05)
-		if abs(velocity.x)-abs(target_vel.x) < .25:
-			target_vel.x = 0
-		if abs(velocity.y)-abs(target_vel.y) < .25:
-			target_vel.y = 0
+	if abs(velocity.x)-abs(target_vel.x) < .25:
+		target_vel.x = 0
+	if abs(velocity.y)-abs(target_vel.y) < .25:
+		target_vel.y = 0
 
 func shoot_test():
 	for i in range(0, 360, 45):
@@ -53,7 +56,7 @@ func m_shoot(angle:int):
 	b.direction = Vector2(1,0).rotated(deg2rad(angle))
 
 func touching_player():
-	if collision:
+	if collision and collision.collider is KinematicBody2D:
 		return collision.collider.name == "Player"
 	else:
 		return false

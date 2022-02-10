@@ -20,6 +20,8 @@ func _ready():
 #	pass
 func set_velocity(vel):
 	target_vel = vel
+func explode(vel):
+	velocity += vel
 
 func _physics_process(delta):
 	move_and_slide(velocity * 60)
@@ -33,4 +35,5 @@ func _physics_process(delta):
 func touching_player():
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
-		return collision.collider.name == "Player"
+		if collision and collision.collider is KinematicBody2D:
+			return collision.collider.name == "Player"

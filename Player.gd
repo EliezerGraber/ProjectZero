@@ -7,10 +7,14 @@ var velocity = Vector2()
 var hook_velocity := Vector2(0,0) # For pulling player to object
 var pulling_velocity := Vector2(0, 0) # For pulling object to player
 var dragging_velocity := Vector2(0, 0) # For dragging objects around with mouse
+var target_velocity := Vector2(0, 0)
 #var transfer_velocity = Vector2()
 var input := Vector2(0, 0)
 var mouse_pos_l := Vector2(0, 0) # Limited mouse position around player
-
+	
+func explode(vel):
+	target_velocity = vel
+	
 func movement():
 	# Inputs
 	input.x = (
@@ -94,7 +98,8 @@ func _physics_process(delta):
 	hook_velocity = Vector2(clamp(hook_velocity.x, -hook_pull,hook_pull),clamp(hook_velocity.y, -hook_pull,hook_pull))
 	
 	## Moooooove
-	velocity += hook_velocity
+	velocity += hook_velocity + target_velocity
+	target_velocity = lerp(target_velocity, Vector2(0, 0), 0.15)
 	move_and_slide(velocity * 80)
 	
 	# Move limited mouse pos if player is moving

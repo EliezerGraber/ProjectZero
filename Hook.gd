@@ -54,9 +54,11 @@ func _process(delta):
 	if hooked or retracting:
 		$Tip.set_collision_mask_bit(0, false)
 		$Tip.set_collision_mask_bit(3, false)
+		$Tip.set_collision_mask_bit(5, false)
 	else:
 		$Tip.set_collision_mask_bit(0, true)
 		$Tip.set_collision_mask_bit(3, true)
+		$Tip.set_collision_mask_bit(5, true)
 		
 	## Visuals
 	if flying or hooked or retracting:	# Only visible if flying or attached to something:
