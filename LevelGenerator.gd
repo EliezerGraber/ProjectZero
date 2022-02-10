@@ -4,9 +4,9 @@ extends Node2D
 var Room = preload("res://Maker.tscn")
 var Player = preload("res://Player.tscn")
 var tile_size = 32
-var num_rooms = 55
-export(int) var w = 35
-export(int) var h = 35
+var num_rooms = 45
+export(int) var w = 40
+export(int) var h = 40
 var wanted_rooms = 10
 var spread = 200
 var path   #will be Astar pathfinding object
@@ -17,7 +17,7 @@ var play_mode = false
 var player = null
 var dead_ends = []
 var dead_end_rooms = []
-onready var Map = $TileMap
+onready var Map = $Navigation2D/TileMap
 
 func _ready():
 	randomize()
@@ -152,11 +152,19 @@ func carve_path(pos1, pos2):
 	for x in range (pos1.x, pos2.x, x_diff):
 		Map.set_cell(x, x_y.y, 2)
 		Map.set_cell(x, x_y.y + y_diff, 2)
+		Map.set_cell(x, x_y.y + 2*y_diff, 2)
+		Map.set_cell(x, x_y.y + 3*y_diff, 2)
 		Map.set_cell(x, x_y.y - y_diff, 2)
+		Map.set_cell(x, x_y.y - 2*y_diff, 2)
+		Map.set_cell(x, x_y.y - 3*y_diff, 2)
 	for y in range (pos1.y, pos2.y, y_diff):
 		Map.set_cell(y_x.x, y, 2)
 		Map.set_cell(y_x.x + x_diff, y, 2)
+		Map.set_cell(y_x.x + 2*x_diff, y, 2)
+		Map.set_cell(y_x.x + 3*x_diff, y, 2)
 		Map.set_cell(y_x.x - x_diff, y, 2)
+		Map.set_cell(y_x.x - 2*x_diff, y, 2)
+		Map.set_cell(y_x.x - 3*x_diff, y, 2)
 
 func find_start_room():
 	start_point = dead_ends[randi() % dead_ends.size()]
