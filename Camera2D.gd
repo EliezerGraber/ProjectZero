@@ -3,6 +3,8 @@ This script controls the dynamic camera.
 """
 extends Camera2D
 
+var is_active = false
+
 # Radius of the zone in the middle of the screen where the cam doesn't move
 export (int) var max_distance = 100
 
@@ -13,5 +15,7 @@ export (int) var max_distance = 100
 func _physics_process(delta):
 #	self.position = lerp(self.position,$"../Player".position,.1)
 	# CHANGE THIS LATER
-	if is_instance_valid($"../Player"):
-		self.position = lerp(self.position,$"../Player".position + get_global_mouse_position().normalized(),0.1)
+	if is_active and is_instance_valid($"../Player"):
+			self.position = lerp(self.position,$"../Player".position + get_global_mouse_position().normalized(),0.1)
+	else:
+		pass

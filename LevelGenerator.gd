@@ -174,6 +174,7 @@ func find_start_room():
 		if r_pos == p_pos:
 			start_room == room
 	player = Player.instance()
+	$Camera2D.is_active = true
 	add_child(player)
 	player.position = path.get_point_position(start_point)
 	play_mode = true
