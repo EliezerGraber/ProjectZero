@@ -35,6 +35,7 @@ rotation = -1.0163
 current = true
 zoom = Vector2( 2, 2 )
 script = ExtResource( 4 )
+is_active = true
 
 [node name="Enemy" parent="." instance=ExtResource( 5 )]
 position = Vector2( -183.615, -26.6786 )

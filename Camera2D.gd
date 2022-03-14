@@ -3,7 +3,7 @@ This script controls the dynamic camera.
 """
 extends Camera2D
 
-var is_active = false
+export (bool) var is_active = false
 
 # Radius of the zone in the middle of the screen where the cam doesn't move
 export (int) var max_distance = 100
