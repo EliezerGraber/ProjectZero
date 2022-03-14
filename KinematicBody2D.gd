@@ -5,19 +5,6 @@ var target_vel = Vector2()
 var size = self.scale.x * self.scale.y
 export(bool) var can_move = true
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
 func set_velocity(vel):
 	target_vel = vel
 func explode(vel):
