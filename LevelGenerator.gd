@@ -92,6 +92,7 @@ func find_mst(nodes):
 
 func make_map():
 	Map.clear()
+	Map.set_quadrant_size(300)
 	#fill area w/ wall tiles, then clear out rooms
 	var full_rect = Rect2()
 	for room in $Rooms.get_children():
