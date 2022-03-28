@@ -24,5 +24,4 @@ func c_on_Bullet_body_entered(body):
 			combat_component = child
 	if(combat_component != null):
 		combat_component.c_hit(1)
-	if body.name != "Tip":
 		queue_free()
