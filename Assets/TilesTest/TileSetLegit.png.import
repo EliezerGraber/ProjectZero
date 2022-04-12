@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/fire.jpg-5478543568e4efa297ded39142b20a8d.stex"
+path="res://.import/TileSetLegit.png-cfdef63f4d256bca625a50df85f406f3.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Objects/fire.jpg"
-dest_files=[ "res://.import/fire.jpg-5478543568e4efa297ded39142b20a8d.stex" ]
+source_file="res://Assets/TilesTest/TileSetLegit.png"
+dest_files=[ "res://.import/TileSetLegit.png-cfdef63f4d256bca625a50df85f406f3.stex" ]
 
 [params]
 
