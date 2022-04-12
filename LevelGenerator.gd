@@ -9,6 +9,7 @@ var SawEnemy = preload("res://SawbladeEnemy.tscn")
 var ExplodeEnemy = preload("res://SawbladeEnemy.tscn")
 var FireEnemy = preload("res://FireEnemy.tscn")
 var IceEnemy = preload("res://SawbladeEnemy.tscn")
+var WinBox = preload("res://WinBox.tscn")
 var EnemyTypes = [SawEnemy, ExplodeEnemy, FireEnemy, IceEnemy]
 export var numEnemies = 20
 var enemyInstances = []
@@ -184,7 +185,8 @@ func carve_path(pos1, pos2):
 		Map.set_cell(y_x.x - 3*x_diff, y, 0)
 
 func find_start_room():
-	start_point = dead_ends[randi() % dead_ends.size()]
+	var startLocation = randi() % dead_ends.size()
+	start_point = dead_ends[startLocation]
 	for room in $Rooms.get_children():
 		var r_pos = Map.world_to_map(room.position)
 		var p_pos = Map.world_to_map(path.get_point_position(start_point))
@@ -212,13 +214,21 @@ func find_start_room():
 			enemyUpTo += 1
 			enemiesInRoom += 1
 	#var endRoomArray = dead_ends.duplicate()
-	#endRoomArray.erase( start_point )
-	#var endPoint = endRoomArray[0]
-	#var distanceTo = 0
-	#for rooms in endRoomArray:
-	#	if Map.world_to_map(path.get_point_position(rooms)).distance_to(Map.world_to_map(path.get_point_position(endPoint))) > distanceTo:
-	#		distanceTo = Map.world_to_map(path.get_point_position(rooms)).distance_to(Map.world_to_map(path.get_point_position(endPoint)))
-	#		endPoint = endRoomArray[rooms]
+	var endPoint = dead_ends[startLocation]
+	var distanceTo = 0
+	var roomUpTo = 0
+	for rooms in $Rooms.get_children():
+		if Map.world_to_map(rooms.position) == Map.world_to_map(path.get_point_position(endPoint)):
+			roomUpTo += 1
+			continue
+		elif Map.world_to_map(rooms.position).distance_to(Map.world_to_map(path.get_point_position(endPoint))) > distanceTo:
+			distanceTo = Map.world_to_map(rooms.position).distance_to(Map.world_to_map(path.get_point_position(endPoint)))
+			endPoint = dead_ends[roomUpTo]
+			roomUpTo += 1
+	#making win condition
+	var winInst = WinBox.instance()
+	add_child(winInst)
+	winInst.position = Map.world_to_map(path.get_point_position(endPoint))
 	play_mode = true
 
 func astar_setup():
