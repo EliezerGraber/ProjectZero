@@ -12,11 +12,10 @@ func _ready():
 	_timer.start()
 
 func _physics_process(delta):
-	print("Burnt:")
 	for body in get_overlapping_bodies():
 		if body != get_parent() and body is KinematicBody2D:
-			body.get_child("CombatComponent").burn(6)
-			print(body.name)
+			body.get_node("CombatComponent").burn(4)
+			print("Burnt: " + body.name)
 
 func die():
 	queue_free()
