@@ -3,11 +3,20 @@ extends Node2D
 
 var Room = preload("res://Maker.tscn")
 var Player = preload("res://Player.tscn")
+var SawEnemy = preload("res://SawbladeEnemy.tscn")
+var ExploadEnemy = preload("res://SawbladeEnemy.tscn")
+var FireEnemy = preload("res://SawbladeEnemy.tscn")
+var IceEnemy = preload("res://SawbladeEnemy.tscn")
+var EnemyTypes = [SawEnemy, ExploadEnemy, FireEnemy, IceEnemy]
+export var numEnemies = 70
+var enemyInstances = []
 var tile_size = 32
-var num_rooms = 45
+var num_rooms = 25
 export(int) var w = 40
 export(int) var h = 40
 var wanted_rooms = 10
+var enemiesPerRoom = numEnemies / wanted_rooms
+var enemyUpTo = 0
 var spread = 200
 var path   #will be Astar pathfinding object
 var start_room = null
@@ -56,7 +65,8 @@ func remove_room(rand_room):
 	#			draw_line(Vector2(pp.x, pp.y), Vector2(cp.x, cp.y), Color(0.86, 0.08, 0.24, 1), 15, true)
 
 #func _process(delta):
-#	update()
+#	if play_mode:
+#		print(player.position)
 
 #func _input(event):
 #	if event.is_action_pressed('ui_focus_next'):
@@ -92,7 +102,7 @@ func find_mst(nodes):
 
 func make_map():
 	Map.clear()
-	Map.set_quadrant_size(300)
+	Map.set_quadrant_size(5)
 	#fill area w/ wall tiles, then clear out rooms
 	var full_rect = Rect2()
 	for room in $Rooms.get_children():
@@ -178,4 +188,16 @@ func find_start_room():
 	$Camera2D.is_active = true
 	add_child(player)
 	player.position = path.get_point_position(start_point)
+	#spawn enemies
+	for i in numEnemies:
+		var typeNum = rand_range(0,3)
+		enemyInstances.append(EnemyTypes[typeNum].instance())
+		add_child(enemyInstances[i])
+	for room in $Rooms.get_children():
+		var r_pos = room.position #Map.world_to_map(room.position)
+		var enemiesInRoom = 0
+		while enemiesInRoom < enemiesPerRoom:
+			enemyInstances[enemyUpTo].position = Vector2(r_pos.x + rand_range(-1100,1100), r_pos.y + rand_range(-1100,1100))
+			enemyUpTo += 1
+			enemiesInRoom += 1
 	play_mode = true
