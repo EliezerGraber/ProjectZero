@@ -105,6 +105,8 @@ func _physics_process(delta):
 	velocity += hook_velocity + target_velocity
 	target_velocity = lerp(target_velocity, Vector2(0, 0), 0.15)
 	move_and_slide(velocity * 80)
+	get_parent().freeAStarCell(self.global_position)
+	get_parent().occupyAStarCell(self.global_position, true)
 	
 	# Move limited mouse pos if player is moving
 	if velocity.length() > 0:

@@ -3,6 +3,8 @@ extends Node2D
 
 var Room = preload("res://Maker.tscn")
 var Player = preload("res://Player.tscn")
+var SawbladeEnemy = preload("res://SawbladeEnemy.tscn")
+var enemy = null
 var tile_size = 32
 var num_rooms = 45
 export(int) var w = 40
@@ -18,6 +20,8 @@ var player = null
 var dead_ends = []
 var dead_end_rooms = []
 onready var Map = $Navigation2D/TileMap
+var astar = null
+var playerVGlobalPos = null
 
 func _ready():
 	randomize()
@@ -135,6 +139,7 @@ func make_map():
 		for x in range (2, s.x * 2 - 1):
 			for y in range (2, s.y * 2 - 1):
 				Map.set_cell(ul.x + x, ul.y + y, 1)
+	astar_setup()
 	find_start_room()
 
 
@@ -175,7 +180,65 @@ func find_start_room():
 		if r_pos == p_pos:
 			start_room == room
 	player = Player.instance()
+	enemy = SawbladeEnemy.instance()
+	add_child(enemy)
+	enemy.position = path.get_point_position(start_point) + Vector2(10, 10)
 	$Camera2D.is_active = true
 	add_child(player)
 	player.position = path.get_point_position(start_point)
+	playerVGlobalPos = path.get_point_position(start_point)
 	play_mode = true
+
+func astar_setup():
+	astar = AStar2D.new()
+	var size = Map.get_used_rect().size
+	astar.reserve_space(size.x * size.y)
+	for i in size.x:
+		for j in size.y:
+			var idx=getAStarCellId(Vector2(i,j))
+			astar.add_point(idx, Map.map_to_world(Vector2(i,j)))
+	# Fills AStar grid with info about valid tiles
+	for i in size.x:
+		for j in size.y:
+			if Map.get_cellv(Vector2(i,j))!=-1:
+				var idx=getAStarCellId(Vector2(i,j))
+				for vNeighborCell in [Vector2(i,j-1),Vector2(i,j+1),Vector2(i-1,j),Vector2(i+1,j)]:
+					var idxNeighbor=getAStarCellId(vNeighborCell)
+					if astar.has_point(idxNeighbor) and Map.get_cellv(vNeighborCell)!=-1:
+						astar.connect_points(idx, idxNeighbor, false)
+	
+func getAStarCellId(vCell:Vector2):
+	return int(vCell.y+vCell.x*Map.get_used_rect().size.y)
+
+func occupyAStarCell(vGlobalPosition:Vector2, isPlayer):
+	var vCell = Map.world_to_map(vGlobalPosition)
+	var idx = getAStarCellId(vCell)
+	if astar.has_point(idx):
+		astar.set_point_disabled(idx, true)
+	if isPlayer:
+		playerVGlobalPos = vGlobalPosition
+	
+func freeAStarCell(vGlobalPosition:Vector2):
+	var vCell = Map.world_to_map(vGlobalPosition)
+	var idx = getAStarCellId(vCell)
+	if astar.has_point(idx):
+		astar.set_point_disabled(idx, false)
+
+func getAStarPath(vStartPosition:Vector2,vTargetPosition:Vector2)->Array:
+	var vCellStart = Map.world_to_map(vStartPosition)
+	var idxStart = getAStarCellId(vCellStart)
+	var vCellTarget = Map.world_to_map(vTargetPosition)
+	var idxTarget = getAStarCellId(vCellTarget)
+	print(playerVGlobalPos)
+	print(vStartPosition)
+	print(vTargetPosition)
+	print(idxStart)
+	print(idxTarget)
+	# Just a small check to see if both points are in the grid
+	if astar.has_point(idxStart) and astar.has_point(idxTarget):
+		return Array(astar.get_point_path(idxStart, idxTarget))
+	return []
+	
+func getAStarPathToPlayer(vStartPosition:Vector2)->Array:
+	return getAStarPath(vStartPosition, playerVGlobalPos)
+	
