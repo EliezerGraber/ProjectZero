@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/TileSetLegit.png-cfdef63f4d256bca625a50df85f406f3.stex"
+path="res://.import/001.png-e47d960df24bfb317394450b9b606149.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/TilesTest/TileSetLegit.png"
-dest_files=[ "res://.import/TileSetLegit.png-cfdef63f4d256bca625a50df85f406f3.stex" ]
+source_file="res://Assets/Objects/Sawblade/001.png"
+dest_files=[ "res://.import/001.png-e47d960df24bfb317394450b9b606149.stex" ]
 
 [params]
 

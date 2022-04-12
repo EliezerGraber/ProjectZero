@@ -17,7 +17,7 @@ texture = ExtResource( 2 )
 centered = false
 offset = Vector2( -32, 0 )
 region_enabled = true
-region_rect = Rect2( 0, 0, 64, 6400 )
+region_rect = Rect2( 0, 0, 64, 6400.07 )
 
 [node name="Tip" type="KinematicBody2D" parent="."]
 scale = Vector2( 1.5, 1.5 )

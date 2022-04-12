@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/TileSetLegit.png-cfdef63f4d256bca625a50df85f406f3.stex"
+path="res://.import/cracked2.png-5539417cabcfff232b9595001563bd06.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/TilesTest/TileSetLegit.png"
-dest_files=[ "res://.import/TileSetLegit.png-cfdef63f4d256bca625a50df85f406f3.stex" ]
+source_file="res://Assets/Objects/SoySauce/cracked2.png"
+dest_files=[ "res://.import/cracked2.png-5539417cabcfff232b9595001563bd06.stex" ]
 
 [params]
 
