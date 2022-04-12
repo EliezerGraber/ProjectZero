@@ -21,7 +21,7 @@ var state = "disabled" # state can be "disabled", "flying", "hooked", or "retrac
 var hooked_obj: Node
 var hooked_offset = Vector2(0, 0)
 var max_distance = 600 # Distance from player until grapple retracts
-var length = 500 # Length of the chain
+var length = 500 # Length of the chainwa
 
 export(bool) var can_move = true
 

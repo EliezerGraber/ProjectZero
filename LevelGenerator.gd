@@ -5,15 +5,25 @@ var Room = preload("res://Maker.tscn")
 var Player = preload("res://Player.tscn")
 var SawbladeEnemy = preload("res://SawbladeEnemy.tscn")
 var enemy = null
+var SawEnemy = preload("res://SawbladeEnemy.tscn")
+var ExplodeEnemy = preload("res://SawbladeEnemy.tscn")
+var FireEnemy = preload("res://FireEnemy.tscn")
+var IceEnemy = preload("res://SawbladeEnemy.tscn")
+var EnemyTypes = [SawEnemy, ExplodeEnemy, FireEnemy, IceEnemy]
+export var numEnemies = 70
+var enemyInstances = []
 var tile_size = 32
-var num_rooms = 45
+var num_rooms = 25
 export(int) var w = 40
 export(int) var h = 40
 var wanted_rooms = 10
+var enemiesPerRoom = numEnemies / wanted_rooms
+var enemyUpTo = 0
 var spread = 200
 var path   #will be Astar pathfinding object
 var start_room = null
 var start_point
+var end_point
 var end_room = null
 var play_mode = false
 var player = null
@@ -60,7 +70,8 @@ func remove_room(rand_room):
 	#			draw_line(Vector2(pp.x, pp.y), Vector2(cp.x, cp.y), Color(0.86, 0.08, 0.24, 1), 15, true)
 
 #func _process(delta):
-#	update()
+#	if play_mode:
+#		print(player.position)
 
 #func _input(event):
 #	if event.is_action_pressed('ui_focus_next'):
@@ -96,7 +107,7 @@ func find_mst(nodes):
 
 func make_map():
 	Map.clear()
-	Map.set_quadrant_size(300)
+	Map.set_quadrant_size(5)
 	#fill area w/ wall tiles, then clear out rooms
 	var full_rect = Rect2()
 	for room in $Rooms.get_children():
@@ -106,7 +117,7 @@ func make_map():
 	var bottomright = Map.world_to_map(full_rect.end)
 	for x in range(topleft.x, bottomright.x):
 		for y in range(topleft.y, bottomright.y):
-			Map.set_cell(x,y,0)
+			Map.set_cell(x,y,1)
 	# clear out rooms & corridors
 	var corridors = []
 	for room in $Rooms.get_children():
@@ -115,7 +126,7 @@ func make_map():
 		var ul = (room.position / tile_size).floor() - s
 		for x in range (2, s.x * 2 - 1):
 			for y in range (2, s.y * 2 - 1):
-				Map.set_cell(ul.x + x, ul.y + y, 2)
+				Map.set_cell(ul.x + x, ul.y + y, 0)
 		var p = path.get_closest_point(Vector2(room.position.x, room.position.y))
 		for conn in path.get_point_connections(p):
 			if not conn in corridors:
@@ -187,6 +198,27 @@ func find_start_room():
 	add_child(player)
 	player.position = path.get_point_position(start_point)
 	playerVGlobalPos = path.get_point_position(start_point)
+
+	#spawn enemies
+	for i in numEnemies:
+		var typeNum = rand_range(0,3)
+		enemyInstances.append(EnemyTypes[typeNum].instance())
+		add_child(enemyInstances[i])
+	for room in $Rooms.get_children():
+		var r_pos = room.position #Map.world_to_map(room.position)
+		var enemiesInRoom = 0
+		while enemiesInRoom < enemiesPerRoom:
+			enemyInstances[enemyUpTo].position = Vector2(r_pos.x + rand_range(-1100,1100), r_pos.y + rand_range(-1100,1100))
+			enemyUpTo += 1
+			enemiesInRoom += 1
+	#var endRoomArray = dead_ends.duplicate()
+	#endRoomArray.erase( start_point )
+	#var endPoint = endRoomArray[0]
+	#var distanceTo = 0
+	#for rooms in endRoomArray:
+	#	if Map.world_to_map(path.get_point_position(rooms)).distance_to(Map.world_to_map(path.get_point_position(endPoint))) > distanceTo:
+	#		distanceTo = Map.world_to_map(path.get_point_position(rooms)).distance_to(Map.world_to_map(path.get_point_position(endPoint)))
+	#		endPoint = endRoomArray[rooms]
 	play_mode = true
 
 func astar_setup():
