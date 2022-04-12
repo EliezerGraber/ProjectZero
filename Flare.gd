@@ -3,6 +3,7 @@ extends Area2D
 var _timer = null
 
 func _ready():
+	get_parent().can_move = false
 	_timer = Timer.new()
 	add_child(_timer)
 	
@@ -18,4 +19,5 @@ func _physics_process(delta):
 			print("Burnt: " + body.name)
 
 func die():
+	get_parent().can_move = true
 	queue_free()

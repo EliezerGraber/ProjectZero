@@ -6,6 +6,7 @@ var velocity = Vector2(0, 0)
 var target_vel = Vector2(0, 0)
 var size = self.scale.x * self.scale.y
 var collision
+var speedControl = 2
 
 export(bool) var can_move = true
 
@@ -33,12 +34,28 @@ func explode(vel):
 	velocity += vel
 func _physics_process(delta):
 	move_and_slide(velocity * 60)
-		
+	if can_move:
+		speedControl = 2
+	else:
+		speedControl = 0
+	#astar code starts here
+	#print(self.global_position)
+	get_parent().freeAStarCell(self.global_position)
+	get_parent().occupyAStarCell(self.global_position, false)
+	var path = get_parent().getAStarPathToPlayer(self.global_position)
+	if path.size() > 1:
+		target_vel = lerp(target_vel,path[0].direction_to(path[1]) * speedControl, speedControl/2)
+	else:
+		if is_instance_valid(get_parent().player):
+			target_vel = lerp(target_vel,self.global_position.direction_to(get_parent().player.global_position)*speedControl, speedControl/2)
+	
 	velocity = lerp(velocity, target_vel, .05)
 	if abs(velocity.x)-abs(target_vel.x) < .25:
 		target_vel.x = 0
 	if abs(velocity.y)-abs(target_vel.y) < .25:
 		target_vel.y = 0
+		
+	#astar code ends here
 		
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
@@ -48,8 +65,8 @@ func _physics_process(delta):
 				if(child.name == 'CombatComponent'):
 					combat_component = child
 			if(combat_component != null):
-				combat_component.c_hit(0.1)
-				print(collision.normal)
+				combat_component.c_hit(0.001)
+				#print(collision.normal)
 				velocity += collision.normal * 10
 
 func touching_player():
