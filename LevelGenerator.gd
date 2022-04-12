@@ -4,10 +4,10 @@ extends Node2D
 var Room = preload("res://Maker.tscn")
 var Player = preload("res://Player.tscn")
 var SawEnemy = preload("res://SawbladeEnemy.tscn")
-var ExploadEnemy = preload("res://SawbladeEnemy.tscn")
-var FireEnemy = preload("res://SawbladeEnemy.tscn")
+var ExplodeEnemy = preload("res://SawbladeEnemy.tscn")
+var FireEnemy = preload("res://FireEnemy.tscn")
 var IceEnemy = preload("res://SawbladeEnemy.tscn")
-var EnemyTypes = [SawEnemy, ExploadEnemy, FireEnemy, IceEnemy]
+var EnemyTypes = [SawEnemy, ExplodeEnemy, FireEnemy, IceEnemy]
 export var numEnemies = 70
 var enemyInstances = []
 var tile_size = 32

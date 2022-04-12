@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/chains.png-74aab23b85612a27d01b47fb07f9d41a.stex"
+path="res://.import/IceEnemyTiny.png-528c4d69155f609a5482a4383f10c5e2.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://chains.png"
-dest_files=[ "res://.import/chains.png-74aab23b85612a27d01b47fb07f9d41a.stex" ]
+source_file="res://Assets/Objects/IceEnemyTiny.png"
+dest_files=[ "res://.import/IceEnemyTiny.png-528c4d69155f609a5482a4383f10c5e2.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false

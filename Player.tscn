@@ -52,6 +52,7 @@ show_behind_parent = true
 [node name="NormalSprite" type="AnimatedSprite" parent="."]
 scale = Vector2( 0.25, 0.25 )
 frames = SubResource( 2 )
+frame = 1
 playing = true
 
 [node name="CrackedSprite" type="AnimatedSprite" parent="."]

@@ -48,7 +48,7 @@ func _physics_process(delta):
 				if(child.name == 'CombatComponent'):
 					combat_component = child
 			if(combat_component != null):
-				combat_component.c_hit(1)
+				combat_component.c_hit(0.1)
 				print(collision.normal)
 				velocity += collision.normal * 10
 

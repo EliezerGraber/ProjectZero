@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/chains.png-74aab23b85612a27d01b47fb07f9d41a.stex"
+path="res://.import/FireEnemy.png-7cb6ff34391162433799c2f8f2d886c0.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://chains.png"
-dest_files=[ "res://.import/chains.png-74aab23b85612a27d01b47fb07f9d41a.stex" ]
+source_file="res://Assets/Objects/FireEnemy.png"
+dest_files=[ "res://.import/FireEnemy.png-7cb6ff34391162433799c2f8f2d886c0.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
