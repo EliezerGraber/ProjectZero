@@ -10,7 +10,7 @@ var ExplodeEnemy = preload("res://SawbladeEnemy.tscn")
 var FireEnemy = preload("res://FireEnemy.tscn")
 var IceEnemy = preload("res://SawbladeEnemy.tscn")
 var EnemyTypes = [SawEnemy, ExplodeEnemy, FireEnemy, IceEnemy]
-export var numEnemies = 70
+export var numEnemies = 20
 var enemyInstances = []
 var tile_size = 32
 var num_rooms = 25
@@ -107,7 +107,7 @@ func find_mst(nodes):
 
 func make_map():
 	Map.clear()
-	Map.set_quadrant_size(5)
+	Map.set_quadrant_size(3)
 	#fill area w/ wall tiles, then clear out rooms
 	var full_rect = Rect2()
 	for room in $Rooms.get_children():
@@ -149,7 +149,7 @@ func make_map():
 		var ul = (room.position / tile_size).floor() - s
 		for x in range (2, s.x * 2 - 1):
 			for y in range (2, s.y * 2 - 1):
-				Map.set_cell(ul.x + x, ul.y + y, 1)
+				Map.set_cell(ul.x + x, ul.y + y, 0)
 	astar_setup()
 	find_start_room()
 
@@ -167,21 +167,21 @@ func carve_path(pos1, pos2):
 		x_y = pos2
 		y_x = pos1
 	for x in range (pos1.x, pos2.x, x_diff):
-		Map.set_cell(x, x_y.y, 2)
-		Map.set_cell(x, x_y.y + y_diff, 2)
-		Map.set_cell(x, x_y.y + 2*y_diff, 2)
-		Map.set_cell(x, x_y.y + 3*y_diff, 2)
-		Map.set_cell(x, x_y.y - y_diff, 2)
-		Map.set_cell(x, x_y.y - 2*y_diff, 2)
-		Map.set_cell(x, x_y.y - 3*y_diff, 2)
+		Map.set_cell(x, x_y.y, 0)
+		Map.set_cell(x, x_y.y + y_diff, 0)
+		Map.set_cell(x, x_y.y + 2*y_diff, 0)
+		Map.set_cell(x, x_y.y + 3*y_diff, 0)
+		Map.set_cell(x, x_y.y - y_diff, 0)
+		Map.set_cell(x, x_y.y - 2*y_diff, 0)
+		Map.set_cell(x, x_y.y - 3*y_diff, 0)
 	for y in range (pos1.y, pos2.y, y_diff):
-		Map.set_cell(y_x.x, y, 2)
-		Map.set_cell(y_x.x + x_diff, y, 2)
-		Map.set_cell(y_x.x + 2*x_diff, y, 2)
-		Map.set_cell(y_x.x + 3*x_diff, y, 2)
-		Map.set_cell(y_x.x - x_diff, y, 2)
-		Map.set_cell(y_x.x - 2*x_diff, y, 2)
-		Map.set_cell(y_x.x - 3*x_diff, y, 2)
+		Map.set_cell(y_x.x, y, 0)
+		Map.set_cell(y_x.x + x_diff, y, 0)
+		Map.set_cell(y_x.x + 2*x_diff, y, 0)
+		Map.set_cell(y_x.x + 3*x_diff, y, 0)
+		Map.set_cell(y_x.x - x_diff, y, 0)
+		Map.set_cell(y_x.x - 2*x_diff, y, 0)
+		Map.set_cell(y_x.x - 3*x_diff, y, 0)
 
 func find_start_room():
 	start_point = dead_ends[randi() % dead_ends.size()]
@@ -191,9 +191,9 @@ func find_start_room():
 		if r_pos == p_pos:
 			start_room == room
 	player = Player.instance()
-	enemy = SawbladeEnemy.instance()
-	add_child(enemy)
-	enemy.position = path.get_point_position(start_point) + Vector2(10, 10)
+	#enemy = SawbladeEnemy.instance()
+	#add_child(enemy)
+	#enemy.position = path.get_point_position(start_point) + Vector2(10, 10)
 	$Camera2D.is_active = true
 	add_child(player)
 	player.position = path.get_point_position(start_point)
@@ -261,11 +261,11 @@ func getAStarPath(vStartPosition:Vector2,vTargetPosition:Vector2)->Array:
 	var idxStart = getAStarCellId(vCellStart)
 	var vCellTarget = Map.world_to_map(vTargetPosition)
 	var idxTarget = getAStarCellId(vCellTarget)
-	print(playerVGlobalPos)
-	print(vStartPosition)
-	print(vTargetPosition)
-	print(idxStart)
-	print(idxTarget)
+	#print(playerVGlobalPos)
+	#print(vStartPosition)
+	#print(vTargetPosition)
+	#print(idxStart)
+	#print(idxTarget)
 	# Just a small check to see if both points are in the grid
 	if astar.has_point(idxStart) and astar.has_point(idxTarget):
 		return Array(astar.get_point_path(idxStart, idxTarget))

@@ -18,7 +18,7 @@ func explode(vel):
 	velocity += vel
 func _physics_process(delta):
 	#astar code starts here
-	print(self.global_position)
+	#print(self.global_position)
 	move_and_slide(velocity * 60)
 	get_parent().freeAStarCell(self.global_position)
 	get_parent().occupyAStarCell(self.global_position, false)
@@ -44,7 +44,7 @@ func _physics_process(delta):
 					combat_component = child
 			if(combat_component != null):
 				combat_component.c_hit(0.1)
-				print(collision.normal)
+				#print(collision.normal)
 				velocity += collision.normal * 10
 
 func touching_player():
