@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Saucy Fights - The Revival and Return.mp3-8dcb7330170a114f1053a35b15f868c0.mp3str"
+
+[deps]
+
+source_file="res://Assets/Music/Saucy Fights - The Revival and Return.mp3"
+dest_files=[ "res://.import/Saucy Fights - The Revival and Return.mp3-8dcb7330170a114f1053a35b15f868c0.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

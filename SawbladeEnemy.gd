@@ -17,16 +17,21 @@ func set_velocity(vel):
 func explode(vel):
 	velocity += vel
 func _physics_process(delta):
+	move_and_slide(velocity * 60)
+	if can_move:
+		speedControl = 4
+	else:
+		speedControl = 1
 	#astar code starts here
 	#print(self.global_position)
-	move_and_slide(velocity * 60)
 	get_parent().freeAStarCell(self.global_position)
 	get_parent().occupyAStarCell(self.global_position, false)
 	var path = get_parent().getAStarPathToPlayer(self.global_position)
 	if path.size() > 1:
-		set_velocity(path[0].direction_to(path[1]) * speedControl)
+		target_vel = lerp(target_vel,path[0].direction_to(path[1]) * speedControl, speedControl/2)
 	else:
-		set_velocity(self.global_position.direction_to(get_parent().player.global_position)*speedControl)
+		if is_instance_valid(get_parent().player):
+			target_vel = lerp(target_vel,self.global_position.direction_to(get_parent().player.global_position)*speedControl, speedControl/2)
 	
 	velocity = lerp(velocity, target_vel, .05)
 	if abs(velocity.x)-abs(target_vel.x) < .25:
@@ -43,7 +48,7 @@ func _physics_process(delta):
 				if(child.name == 'CombatComponent'):
 					combat_component = child
 			if(combat_component != null):
-				combat_component.c_hit(0.1)
+				combat_component.c_hit(0.01)
 				#print(collision.normal)
 				velocity += collision.normal * 10
 

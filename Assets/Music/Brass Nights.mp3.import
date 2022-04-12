@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Brass Nights.mp3-97534f16e5cf74cb900f489cbff5133d.mp3str"
+
+[deps]
+
+source_file="res://Assets/Music/Brass Nights.mp3"
+dest_files=[ "res://.import/Brass Nights.mp3-97534f16e5cf74cb900f489cbff5133d.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
