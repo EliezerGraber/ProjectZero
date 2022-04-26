@@ -17,7 +17,7 @@ var tile_size = 32
 var num_rooms = 25
 export(int) var w = 40
 export(int) var h = 40
-var wanted_rooms = 10
+var wanted_rooms = 5
 var enemiesPerRoom = numEnemies / wanted_rooms
 var enemyUpTo = 0
 var spread = 200
@@ -230,6 +230,9 @@ func find_start_room():
 	add_child(winInst)
 	winInst.position = Map.world_to_map(path.get_point_position(endPoint))
 	play_mode = true
+	
+	yield(get_tree().create_timer(2.0), "timeout")
+	$WinBox.active_ = true
 
 func astar_setup():
 	astar = AStar2D.new()

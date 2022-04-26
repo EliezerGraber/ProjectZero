@@ -1,6 +1,6 @@
 extends Area2D
 
-
+var active_ = false
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -12,7 +12,7 @@ func _ready():
 
 func _physics_process(delta):
 	for body in get_overlapping_bodies():
-		if body.name == "Player":
+		if body.name == "Player" and active_ == true:
 			get_tree().change_scene("res://WinScreen.tscn")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -19,7 +19,7 @@ func explode(vel):
 func _physics_process(delta):
 	move_and_slide(velocity * 60)
 	if can_move:
-		speedControl = 4
+		speedControl = 3
 	else:
 		speedControl = 1
 	#astar code starts here
@@ -30,7 +30,7 @@ func _physics_process(delta):
 	if path.size() > 1:
 		target_vel = lerp(target_vel,path[0].direction_to(path[1]) * speedControl, speedControl/2)
 	else:
-		if is_instance_valid(get_parent().player):
+		if is_instance_valid($"../Player"):
 			target_vel = lerp(target_vel,self.global_position.direction_to(get_parent().player.global_position)*speedControl, speedControl/2)
 	
 	velocity = lerp(velocity, target_vel, .05)
