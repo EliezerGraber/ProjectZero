@@ -118,3 +118,8 @@ func _physics_process(delta):
 		if hook.hooked_obj is KinematicBody2D:
 			if hook.hooked_obj.touching_player() and pull_type == "to_obj":
 				hook.release(false) # Release without retracting
+		if hook.hooked_obj is TileMap:
+			for i in get_slide_count():
+				var collision = get_slide_collision(i)
+				if collision.collider is TileMap:
+					hook.release(true)
