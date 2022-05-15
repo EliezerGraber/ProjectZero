@@ -16,7 +16,15 @@ func set_velocity(vel):
 	target_vel = vel
 func explode(vel):
 	velocity += vel
+func is_loaded():
+	if is_instance_valid($"../Player") and Vector2(self.global_position - $"../Player".global_position).abs().length() < 1000:
+		return true
+	else:
+		return false
 func _physics_process(delta):
+	if self.is_loaded():
+		do_physics_process()
+func do_physics_process():
 	move_and_slide(velocity * 60)
 	if can_move:
 		speedControl = 3
